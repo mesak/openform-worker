@@ -1,14 +1,19 @@
 {
-  "name": "openform",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "name": "openform-worker",
+  "version": "1.0.0",
+  "description": "Google Forms Proxy on Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12"
-  }
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240101.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.0"
+  },
+  "private": true
 }

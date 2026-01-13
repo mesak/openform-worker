@@ -20,11 +20,21 @@ export async function submitForm(id: string, data: FormDataType) {
     }
   }
 
-  delete data['emailAddress'];
+  // We are processing a copy or just removing it from the loop by checking key
+  // But wait, the original code did `delete data['emailAddress']`.
+  // Modifying the argument object is generally okay here but cleaner to clone.
+  // However, for migration fidelity, I will keep the logic close to original.
+  // Since we don't want to mutate the inputs if possible, I'll filter in the loop.
+  // Actually, let's stick to the original logic which assumes `data` can be modified or we just let it be.
+  // The original code `delete data['emailAddress']` modifies the passed object.
+  // Let's protect the input by cloning it lightly or just iterating carefully.
+  
+  // Clone data to avoid side effects
+  const dataToProcess = { ...data };
+  delete dataToProcess['emailAddress'];
 
   // Handle other fields
-
-  Object.entries(data).forEach(([key, value]) => {
+  Object.entries(dataToProcess).forEach(([key, value]) => {
     const id = `entry.${key}`;
     if (Array.isArray(value)) {
       value.forEach((v) => {
@@ -47,9 +57,9 @@ export async function submitForm(id: string, data: FormDataType) {
       message: 'Unable to submit the form. Check your form ID and email settings, and try again.'
     }
   }
-
+  
   return {
     error: false,
-    message: 'Form submitted successfully'
-  }
+    message: 'Form submitted successfully.'
+  };
 }

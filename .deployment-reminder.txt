@@ -1,0 +1,20 @@
+⚠️  部署前提醒 ⚠️
+================
+
+請先修改 wrangler.jsonc 中的 Worker 名稱：
+
+1. 開啟 wrangler.jsonc
+2. 將 "name": "openform-worker" 改為您想要的名稱
+3. 執行 npm run deploy
+
+範例：
+{
+  "name": "my-form-api",  // ← 這會變成 https://my-form-api.xxx.workers.dev
+  "main": "src/index.ts",
+  ...
+}
+
+部署指令：
+  npx wrangler login  # 首次部署需要登入
+  npm run deploy      # 部署到 Cloudflare
+

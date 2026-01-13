@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 enum GoogleFormsFieldTypeEnum {
   TEXT = 0,
@@ -19,7 +19,7 @@ enum EmailCollectionRuleEnum {
   INPUT = 3
 }
 
-interface Form {
+export interface Form {
   title: string;
   description: string | null;
   collectEmails: "NONE" | "VERIFIED" | "INPUT";
@@ -27,7 +27,7 @@ interface Form {
   error: false;
 }
 
-interface Question {
+export interface Question {
   title: string;
   description: string | null;
   type: "TEXT" | "PARAGRAPH_TEXT" | "MULTIPLE_CHOICE" | "CHECKBOXES" | "DROPDOWN" | "DATE" | "TIME" | "SCALE" | "GRID" | "FILE_UPLOAD"
@@ -36,7 +36,7 @@ interface Question {
   id: string;
 }
 
-interface Error {
+export interface Error {
   error: true;
   message: string;
 }
@@ -44,7 +44,11 @@ interface Error {
 export async function getFormData(id: string): Promise<Form | Error> {
   const url = `https://docs.google.com/forms/d/e/${id}/viewform`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+      headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+  });
 
   if (!response.ok) {
     return {
@@ -55,19 +59,55 @@ export async function getFormData(id: string): Promise<Form | Error> {
 
   const htmlContent = await response.text();
 
-  const $ = cheerio.load(htmlContent);
-
-  const scriptTags = $('script[type="text/javascript"]');
-
   let fbPublicLoadDataScript: string | undefined;
+  
+  // Try RegExp first - improved pattern to handle multiline and variations
+  const regex = /FB_PUBLIC_LOAD_DATA_\s*=\s*(\[[\s\S]*?\]);/;
+  const match = htmlContent.match(regex);
+  
+  if (match && match[1]) {
+      fbPublicLoadDataScript = match[1];
+  } else {
+    const $ = cheerio.load(htmlContent);
+    const scriptTags = $('script');
 
-  scriptTags.each((_, tag) => {
-    const scriptContent = $(tag).html();
-    if (scriptContent && scriptContent.includes('FB_PUBLIC_LOAD_DATA_')) {
-      fbPublicLoadDataScript = scriptContent;
-      return false;
-    }
-  });
+    scriptTags.each((i: number, tag: any) => {
+        const scriptContent = $(tag).html();
+        if (scriptContent && scriptContent.includes('FB_PUBLIC_LOAD_DATA_')) {
+          fbPublicLoadDataScript = scriptContent;
+          return false;
+        }
+    });
+  }
+
+  let fbPublicJsScriptContentCleanedUp: string;
+  
+  // If we got it from RegExp, it might already be clean JSON.
+  // If we got it from Cheerio, it's the full script content (var ... = [...];).
+  
+  if (match && match[1]) {
+      fbPublicJsScriptContentCleanedUp = fbPublicLoadDataScript?.trim() || "";
+  } else {
+      // Cleaning logic for Cheerio method
+      if (!fbPublicLoadDataScript) return { error: true, message: "Should not happen" }; // Type guard
+      
+      // Use RegExp to extract the JSON array safely from the script content
+      // Pattern: FB_PUBLIC_LOAD_DATA_ = [ ... ];
+      // We look for the array bracket structure.
+      const jsonRegex = /FB_PUBLIC_LOAD_DATA_\s*=\s*(\[.+\])\s*;/s;
+      const jsonMatch = fbPublicLoadDataScript.match(jsonRegex);
+
+      if (jsonMatch && jsonMatch[1]) {
+          fbPublicJsScriptContentCleanedUp = jsonMatch[1].trim();
+      } else {
+          // Fallback to original substring method if regex fails
+          const beginIndex = fbPublicLoadDataScript.indexOf('[');
+          const lastIndex = fbPublicLoadDataScript.lastIndexOf(';');
+          fbPublicJsScriptContentCleanedUp = fbPublicLoadDataScript
+            .substring(beginIndex, lastIndex)
+            .trim();
+      }
+  }
 
   if (!fbPublicLoadDataScript) {
     return {
@@ -75,12 +115,6 @@ export async function getFormData(id: string): Promise<Form | Error> {
       message: 'Unable to find the script tag containing FB_PUBLIC_LOAD_DATA_'
     }
   }
-
-  const beginIndex = fbPublicLoadDataScript.indexOf('[');
-  const lastIndex = fbPublicLoadDataScript.lastIndexOf(';');
-  const fbPublicJsScriptContentCleanedUp = fbPublicLoadDataScript
-    .substring(beginIndex, lastIndex)
-    .trim();
 
   let jArray: any[];
   try {
@@ -110,7 +144,7 @@ export async function getFormData(id: string): Promise<Form | Error> {
 
   for (const field of arrayOfFields) {
     if (field.length < 4 || !(field[4]?.length)) {
-      console.log("Continue: Non Submittable field or field without answer was found"); // Logging added
+      // console.log("Continue: Non Submittable field or field without answer was found"); // Logging removed for Worker cleanliness
       continue;
     }
 

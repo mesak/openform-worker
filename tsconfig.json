@@ -1,21 +1,19 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
-    "module": "esnext",
-    "target": "esnext",
+    "target": "es2021",
+    "lib": ["es2021"],
+    "module": "es2022",
     "moduleResolution": "bundler",
-    "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
-    "strict": true,
-    "downlevelIteration": true,
-    "skipLibCheck": true,
-    "jsx": "preserve",
+    "types": ["@cloudflare/workers-types"],
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
-    "noEmit": true,
-    "types": [
-      "bun-types" // add Bun global
-    ]
-  }
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"]
 }
