@@ -136,6 +136,18 @@ const HTML_PAGE = `<!DOCTYPE html>
             </div>
 
             <div class="section">
+                <h2>線上測試</h2>
+                <div class="demo-section">
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">在此貼上 Google Form 網址，直接測試 API 解析結果：</p>
+                    <div class="input-group">
+                        <input type="text" id="formUrl" placeholder="貼上 Google Form 網址 (例如 https://docs.google.com/forms/d/e/.../viewform)">
+                        <button onclick="fetchForm()">取得 JSON</button>
+                    </div>
+                    <div id="result"></div>
+                </div>
+            </div>
+
+            <div class="section">
                 <h2>如何取得 Form ID？</h2>
                 <ol style="margin-left: 1.5rem; line-height: 2;">
                     <li>開啟您的 Google Form</li>
@@ -146,11 +158,17 @@ const HTML_PAGE = `<!DOCTYPE html>
                 <p style="margin-top: 1rem;">範例：<br>
                 <code style="font-size: 0.8rem;">https://docs.google.com/forms/d/e/<strong style="color: #667eea;">1FAIpQLSezf...</strong>/viewform</code></p>
             </div>
+
+            <div class="section">
+                <h2>⚠️ 注意事項</h2>
+                <p>本服務受 Cloudflare Workers 每月使用次數限制。</p>
+                <p style="margin-top: 0.5rem;">若有興趣大量使用，請直接 <a href="https://github.com/mesak/openform-worker" target="_blank">Clone 本專案</a> 自行部署。</p>
+            </div>
         </div>
 
         <footer>
             <p>🛠️ Built with Cloudflare Workers · TypeScript · Cheerio</p>
-            <p style="margin-top: 0.5rem;"><a href="https://github.com" target="_blank">查看文檔</a> · <a href="https://github.com" target="_blank">GitHub</a></p>
+            <p style="margin-top: 0.5rem;"><a href="https://github.com/mesak/openform-worker" target="_blank">GitHub</a> · <a href="https://github.com/eiiot/openform" target="_blank">原作者 GitHub</a></p>
         </footer>
     </div>
     
@@ -268,6 +286,27 @@ export default {
         });
 
       } else if (request.method === "POST") {
+        
+        // --------------------------------------------------------------------------------
+        // [防止濫用] 簡單的頻率限制 (Rate Limiting)
+        // ⚠️ 如果您是複製此專案自行部署，可以移除或註解掉以下這段程式碼來解除限制
+        // --------------------------------------------------------------------------------
+        const clientIP = request.headers.get("CF-Connecting-IP") || "unknown";
+        const rateLimitKey = `limit:${clientIP}`;
+        const limitRecord = CACHE.get(rateLimitKey);
+
+        if (limitRecord && limitRecord.expiry > new Date()) {
+            const currentCount = limitRecord.data || 0;
+            if (currentCount >= 10) {
+                return errorResponse("Too Many Requests. Rate limit: 10 requests per 10 seconds.", 429);
+            }
+            limitRecord.data = currentCount + 1;
+        } else {
+            // 設定 10 秒窗口，允許 10 次請求
+            CACHE.set(rateLimitKey, { data: 1, expiry: new Date(Date.now() + 10000) });
+        }
+        // --------------------------------------------------------------------------------
+
         let body: FormDataType;
         try {
             body = await request.json() as FormDataType;

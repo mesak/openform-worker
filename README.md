@@ -8,7 +8,21 @@ A Cloudflare Worker-based API for programmatically accessing Google Forms. Get f
 -  **Simple REST API**: GET form structure, POST to submit
 - 📦 **Serverless**: No server management required
 - 🌍 **Global**: Low latency worldwide via Cloudflare edge
-- 🎨 **Web UI**: Beautiful landing page with API documentation
+- 🎨 **Web UI**: Beautiful landing page with API documentation & Online Test tool
+
+## ⚠️ Important Notices
+
+### Rate Limiting (防濫用機制)
+To prevent abuse, the public instance includes a default rate limit (10 seconds cooldown per IP for POST requests).
+為了防止濫用，預設包含頻率限制（POST 請求每 IP 需間隔 10 秒）。
+
+**For Developers:**
+If you clone this project, you can remove this limit in `src/index.ts`.
+如果您 Clone 此專案自行部署，可以在 `src/index.ts` 中移除此限制。
+
+### Monthly Usage Limits (使用量限制)
+Cloudflare Workers Free Tier has a limit of 100,000 requests per day (approx.). If you expect high traffic, please clone this repository and deploy it to your own Cloudflare account.
+Cloudflare Workers 免費方案每日約有 10 萬次請求限制。若您有大量使用需求，請務必 Clone 本專案並部署至您自己的 Cloudflare 帳號。
 
 ## Prerequisites
 
@@ -277,8 +291,15 @@ MIT
 
 ## Credits
 
+Based on [openform](https://github.com/eiiot/openform) by [eiiot](https://github.com/eiiot).
+This project is a fork/extension of eiiot's work, simplified for general usage and enhanced with a Web UI.
+
 Inspired by [opensheet](https://github.com/benborgers/opensheet) by Ben Borgers.
 
-Special thanks to Ben Borgers for creating opensheet, which served as the foundation and inspiration for this project. His elegant approach to creating serverless APIs for Google Sheets demonstrated how powerful and simple Cloudflare Workers can be. This project extends that philosophy to Google Forms, making form data accessible through clean REST APIs.
+Special thanks to:
+- **eiiot** for the original [openform](https://github.com/eiiot/openform) implementation.
+- **Ben Borgers** for [opensheet](https://github.com/benborgers/opensheet), which served as the foundation and inspiration for these types of serverless wrappers.
 
-感謝 Ben Borgers 創建了 opensheet 專案，它為本專案提供了基礎和靈感。他對於使用 Cloudflare Workers 建立無伺服器 API 的優雅實作方式，展示了強大而簡潔的開發理念。本專案將這個理念延伸到 Google Forms，讓表單資料可以透過簡潔的 REST API 存取。
+感謝:
+- **eiiot** 開發原本的 [openform](https://github.com/eiiot/openform)。本專案基於其原始碼進行優化與介面增強。
+- **Ben Borgers** 創建了 [opensheet](https://github.com/benborgers/opensheet) 專案，為 Cloudflare Workers Serverless API 提供了極佳的範例。
