@@ -124,10 +124,10 @@ const HTML_PAGE = `<!DOCTYPE html>
                 <h2>使用範例</h2>
                 
                 <h3 style="margin-top: 1.5rem; color: #495057;">1️⃣ 取得表單結構 (GET)</h3>
-                <pre><code>curl https://your-worker.workers.dev/g/1FAIpQLSd...</code></pre>
+                <pre><code>curl https://form.wiz.tw/g/1FAIpQLSd...</code></pre>
                 
                 <h3 style="margin-top: 1.5rem; color: #495057;">2️⃣ 送出表單資料 (POST)</h3>
-                <pre><code>curl -X POST https://your-worker.workers.dev/g/1FAIpQLSd... \\
+                <pre><code>curl -X POST https://form.wiz.tw/g/1FAIpQLSd... \\
   -H "Content-Type: application/json" \\
   -d '{
     "1536632002": "test@example.com",
@@ -163,6 +163,20 @@ const HTML_PAGE = `<!DOCTYPE html>
                 <h2>⚠️ 注意事項</h2>
                 <p>本服務受 Cloudflare Workers 每月使用次數限制。</p>
                 <p style="margin-top: 0.5rem;">若有興趣大量使用，請直接 <a href="https://github.com/mesak/openform-worker" target="_blank">Clone 本專案</a> 自行部署。</p>
+            </div>
+
+
+            <div class="section">
+                <h2>關於作者</h2>
+                <div style="background: #f0f9ff; border: 1px solid #b3e5fc; border-left: 4px solid #03a9f4; padding: 1.25rem;">
+                    <h3 style="margin-top: 0; color: #0277bd; font-size: 1.1rem;">🔗 wiz.tw</h3>
+                    <p style="margin: 0.5rem 0 1rem; color: #555; font-size: 0.95rem;">
+                        歡迎造訪我的個人主頁，探索更多實用的 Web 工具與專案作品。
+                    </p>
+                    <a href="https://wiz.tw" target="_blank" style="display: inline-block; background: #03a9f4; color: white; padding: 0.5rem 1.2rem; border-radius: 4px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: background 0.2s;">
+                        前往 wiz.tw &rarr;
+                    </a>
+                </div>
             </div>
         </div>
 

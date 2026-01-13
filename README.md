@@ -64,7 +64,7 @@ Form ID:
 ### API Endpoint Format
 
 ```
-https://your-worker.workers.dev/g/<form_id>
+https://form.wiz.tw/g/<form_id>
 ```
 
 Local development:
@@ -74,7 +74,7 @@ http://localhost:8787/g/<form_id>
 
 **Web UI**: Visit the root URL (`/`) for interactive documentation:
 ```
-https://your-worker.workers.dev/
+https://form.wiz.tw/
 ```
 
 ## GET Method - Retrieve Form Structure
