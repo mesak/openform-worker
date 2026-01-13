@@ -38,41 +38,75 @@ const HTML_PAGE = `<!DOCTYPE html>
     <title>OpenForm Worker - Google Forms API</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; line-height: 1.6; color: #1a1a1a; background: #f5f5f5; min-height: 100vh; padding: 2rem; }
+        body { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; line-height: 1.6; color: #1a1a1a; background: #f5f5f5; min-height: 100vh; padding: 1rem; }
         .container { max-width: 1000px; margin: 0 auto; background: white; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        header { background: #2c3e50; color: #ecf0f1; padding: 2rem; border-bottom: 3px solid #3498db; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: -0.5px; }
-        .subtitle { opacity: 0.85; font-size: 0.95rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-        .content { padding: 2rem; }
-        .section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #e0e0e0; }
+        header { background: #2c3e50; color: #ecf0f1; padding: 1.5rem; border-bottom: 3px solid #3498db; }
+        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: -0.5px; }
+        .subtitle { opacity: 0.85; font-size: 0.85rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        .content { padding: 1.5rem; }
+        .section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e0e0e0; }
         .section:last-child { border-bottom: none; }
-        h2 { color: #2c3e50; margin-bottom: 1rem; font-size: 1.3rem; font-weight: 600; border-left: 4px solid #3498db; padding-left: 1rem; }
-        .endpoint { background: #f8f9fa; border: 1px solid #dee2e6; padding: 1rem; margin: 1rem 0; font-family: monospace; }
-        .method { display: inline-block; padding: 0.25rem 0.75rem; font-weight: bold; font-size: 0.875rem; margin-right: 0.5rem; font-family: monospace; border: 1px solid; }
+        h2 { color: #2c3e50; margin-bottom: 0.8rem; font-size: 1.1rem; font-weight: 600; border-left: 4px solid #3498db; padding-left: 0.8rem; }
+        .endpoint { background: #f8f9fa; border: 1px solid #dee2e6; padding: 0.8rem; margin: 0.8rem 0; font-family: monospace; overflow-x: auto; }
+        .endpoint p { font-size: 0.85rem; }
+        .method { display: inline-block; padding: 0.2rem 0.6rem; font-weight: bold; font-size: 0.75rem; margin-right: 0.5rem; font-family: monospace; border: 1px solid; }
         .get { background: #e8f5e9; color: #2e7d32; border-color: #4caf50; }
         .post { background: #e3f2fd; color: #1565c0; border-color: #2196f3; }
-        code { background: #f4f4f4; padding: 0.2rem 0.5rem; border: 1px solid #ddd; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem; color: #c7254e; }
-        pre { background: #263238; color: #aed581; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; border-left: 3px solid #3498db; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem; line-height: 1.5; }
-        pre code { background: none; color: inherit; padding: 0; border: none; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-        .feature { background: #fafafa; padding: 1.25rem; border: 1px solid #e0e0e0; border-left: 3px solid #3498db; }
-        .feature-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
-        .feature h3 { color: #2c3e50; font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
-        .feature p { font-size: 0.875rem; color: #555; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-        footer { background: #f8f9fa; padding: 1.5rem; text-align: center; color: #6c757d; border-top: 1px solid #dee2e6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.9rem; }
+        code { background: #f4f4f4; padding: 0.15rem 0.4rem; border: 1px solid #ddd; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.8rem; color: #c7254e; word-break: break-all; }
+        pre { background: #263238; color: #aed581; padding: 0.8rem; overflow-x: auto; margin: 0.8rem 0; border-left: 3px solid #3498db; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.75rem; line-height: 1.4; }
+        pre code { background: none; color: inherit; padding: 0; border: none; font-size: 0.75rem; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+        .feature { background: #fafafa; padding: 1rem; border: 1px solid #e0e0e0; border-left: 3px solid #3498db; }
+        .feature-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+        .feature h3 { color: #2c3e50; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 600; }
+        .feature p { font-size: 0.8rem; color: #555; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        footer { background: #f8f9fa; padding: 1rem; text-align: center; color: #6c757d; border-top: 1px solid #dee2e6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.8rem; }
         a { color: #3498db; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        ol { margin-left: 1.5rem; line-height: 2; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-        h3 { margin-top: 1.5rem; color: #495057; font-size: 1.05rem; font-weight: 600; }
-        .demo-section { background: #f8f9fa; padding: 1.5rem; border: 1px solid #dee2e6; margin: 1.5rem 0; }
-        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-        input[type="text"] { flex: 1; padding: 0.75rem; border: 1px solid #ced4da; font-family: monospace; font-size: 0.9rem; }
+        ol { margin-left: 1.2rem; line-height: 1.8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.9rem; }
+        h3 { margin-top: 1rem; color: #495057; font-size: 0.95rem; font-weight: 600; }
+        .demo-section { background: #f8f9fa; padding: 1rem; border: 1px solid #dee2e6; margin: 1rem 0; }
+        .demo-section p { font-size: 0.85rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.8rem; }
+        input[type="text"] { width: 100%; padding: 0.6rem; border: 1px solid #ced4da; font-family: monospace; font-size: 0.85rem; }
         input[type="text"]:focus { outline: none; border-color: #3498db; }
-        button { padding: 0.75rem 1.5rem; background: #3498db; color: white; border: none; cursor: pointer; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        button { width: 100%; padding: 0.6rem 1rem; background: #3498db; color: white; border: none; cursor: pointer; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.9rem; }
         button:hover { background: #2980b9; }
         button:disabled { background: #95a5a6; cursor: not-allowed; }
-        #result { background: #263238; color: #aed581; padding: 1rem; overflow-x: auto; max-height: 500px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word; display: none; border-left: 3px solid #3498db; }
-        .error { color: #e74c3c; background: #fadbd8; padding: 0.75rem; border-left: 3px solid #e74c3c; }
+        #result { background: #263238; color: #aed581; padding: 0.8rem; overflow-x: auto; max-height: 300px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.75rem; white-space: pre-wrap; word-wrap: break-word; display: none; border-left: 3px solid #3498db; }
+        .error { color: #e74c3c; background: #fadbd8; padding: 0.6rem; border-left: 3px solid #e74c3c; font-size: 0.85rem; }
+        
+        /* Desktop styles */
+        @media (min-width: 768px) {
+            body { padding: 2rem; }
+            header { padding: 2rem; }
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 0.95rem; }
+            .content { padding: 2rem; }
+            .section { margin-bottom: 2rem; padding-bottom: 2rem; }
+            h2 { font-size: 1.3rem; margin-bottom: 1rem; padding-left: 1rem; }
+            .endpoint { padding: 1rem; margin: 1rem 0; }
+            .endpoint p { font-size: 1rem; }
+            .method { padding: 0.25rem 0.75rem; font-size: 0.875rem; }
+            code { font-size: 0.9rem; }
+            pre { padding: 1.25rem; margin: 1rem 0; font-size: 0.85rem; line-height: 1.5; }
+            pre code { font-size: 0.85rem; }
+            .features { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+            .feature { padding: 1.25rem; }
+            .feature-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+            .feature h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+            .feature p { font-size: 0.875rem; }
+            footer { padding: 1.5rem; font-size: 0.9rem; }
+            ol { margin-left: 1.5rem; line-height: 2; font-size: 1rem; }
+            h3 { margin-top: 1.5rem; font-size: 1.05rem; }
+            .demo-section { padding: 1.5rem; margin: 1.5rem 0; }
+            .demo-section p { font-size: 0.9rem; }
+            .input-group { flex-direction: row; margin-bottom: 1rem; }
+            input[type="text"] { padding: 0.75rem; font-size: 0.9rem; }
+            button { width: auto; padding: 0.75rem 1.5rem; }
+            #result { padding: 1rem; max-height: 500px; font-size: 0.85rem; }
+            .error { padding: 0.75rem; font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
