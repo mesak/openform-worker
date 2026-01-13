@@ -278,3 +278,7 @@ MIT
 ## Credits
 
 Inspired by [opensheet](https://github.com/benborgers/opensheet) by Ben Borgers.
+
+Special thanks to Ben Borgers for creating opensheet, which served as the foundation and inspiration for this project. His elegant approach to creating serverless APIs for Google Sheets demonstrated how powerful and simple Cloudflare Workers can be. This project extends that philosophy to Google Forms, making form data accessible through clean REST APIs.
+
+感謝 Ben Borgers 創建了 opensheet 專案，它為本專案提供了基礎和靈感。他對於使用 Cloudflare Workers 建立無伺服器 API 的優雅實作方式，展示了強大而簡潔的開發理念。本專案將這個理念延伸到 Google Forms，讓表單資料可以透過簡潔的 REST API 存取。
