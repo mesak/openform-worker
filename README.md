@@ -79,67 +79,131 @@ https://form.wiz.tw/
 
 ## GET Method - Retrieve Form Structure
 
-Returns form metadata and all questions with their IDs, types, and options.
+Returns form metadata, sections, and all questions with their IDs, types, and options.
 
 **Request:**
 ```bash
 curl http://localhost:8787/g/1FAIpQLSezfDEk03hYi9duf1vVSDGGBFAZq2zfPNw9_smS_8X2xmfzWQ
 ```
 
-**Response:**
+**Response (Simple Form):**
 ```json
 {
   "title": "未命名表單",
   "description": null,
   "collectEmails": "NONE",
+  "sections": [
+    {
+      "id": null,
+      "title": null,
+      "questions": [
+        {
+          "title": "公司的MAIL",
+          "type": "TEXT",
+          "options": [],
+          "required": true,
+          "id": "1536632002"
+        }
+      ]
+    }
+  ],
   "questions": [
     {
       "title": "公司的MAIL",
-      "description": null,
       "type": "TEXT",
       "options": [],
       "required": true,
       "id": "1536632002"
-    },
-    {
-      "title": "test1",
-      "description": null,
-      "type": "MULTIPLE_CHOICE",
-      "options": ["選項 1", "選項 2"],
-      "required": true,
-      "id": "1132838313"
-    },
-    {
-      "title": "check2",
-      "description": null,
-      "type": "CHECKBOXES",
-      "options": ["選項 1", "選項 2", "選項 3"],
-      "required": true,
-      "id": "216510093"
     }
   ],
   "error": false
 }
 ```
 
+### Section 分區表單支援
+
+當表單使用「根據答案前往相關區段」功能時，API 會自動解析 Section 結構：
+
+**Response (Form with Sections):**
+```json
+{
+  "title": "訂餐表單",
+  "sections": [
+    {
+      "id": null,
+      "title": null,
+      "questions": [
+        {
+          "title": "樓層",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            { "value": "18樓", "goToSection": "1818063484" },
+            { "value": "19樓1區", "goToSection": "1094976054" }
+          ],
+          "required": true,
+          "id": "639819479"
+        }
+      ]
+    },
+    {
+      "id": "1818063484",
+      "title": "餐點選擇：明德素食 / 泰私廚",
+      "questions": [
+        {
+          "title": "餐點",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            "1.明德素食-胚芽+8樣配菜(全素)",
+            "2.泰私廚-打拋豬拌麵"
+          ],
+          "required": true,
+          "id": "1603714434"
+        }
+      ]
+    }
+  ],
+  "questions": [...],
+  "error": false
+}
+```
+
+**Section 欄位說明:**
+- `sections[].id`: Section ID（用於 `goToSection` 導航），預設區塊為 `null`
+- `sections[].title`: Section 標題
+- `options[].goToSection`: 選擇此選項後跳轉至的 Section ID
+
 ### Response Schema
 
 ```typescript
-{
+interface Form {
   title: string;
   description: string | null;
   collectEmails: "NONE" | "VERIFIED" | "INPUT";
-  questions: {
-    title: string;
-    description: string | null;
-    type: "TEXT" | "PARAGRAPH_TEXT" | "MULTIPLE_CHOICE" | 
-          "CHECKBOXES" | "DROPDOWN" | "DATE" | "TIME" | 
-          "SCALE" | "GRID" | "FILE_UPLOAD";
-    options: string[];
-    required: boolean;
-    id: string;
-  }[];
+  sections: FormSection[];   // 依 Section 分組
+  questions: Question[];     // 向下相容的扁平列表
   error: false;
+}
+
+interface FormSection {
+  id: string | null;         // Section ID，預設區塊為 null
+  title: string | null;      // Section 標題
+  questions: Question[];
+}
+
+interface Question {
+  title: string;
+  description: string | null;
+  type: "TEXT" | "PARAGRAPH_TEXT" | "MULTIPLE_CHOICE" | 
+        "CHECKBOXES" | "DROPDOWN" | "DATE" | "TIME" | 
+        "SCALE" | "GRID" | "FILE_UPLOAD";
+  options: (string | QuestionOption)[];  // 可能是純字串或帶導航的物件
+  required: boolean;
+  id: string;
+}
+
+interface QuestionOption {
+  value: string;
+  goToSection?: string | null;  // 目標 Section ID，null 表示繼續下一題
 }
 ```
 
